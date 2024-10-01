@@ -1,6 +1,5 @@
-
 /*
- * *** YOUR NAME GOES HERE / YOUR SECTION NUMBER ***
+ * *** ANNIKA BARTLETT / 002 ***
  *
  * This java file is a Java object implementing simple AVL Tree.
  * You are to complete the deleteElement method.
@@ -342,25 +341,64 @@ class LUC_AVLTree {
      */
 
     private Node deleteElement(int value, Node node) {
+        // if tree is empty
+        if (node == null) {
+            return null;
+        }
 
-        /*
-         * ADD CODE HERE
-         * 
-         * NOTE, that you should use the existing coded private methods
-         * in this file, which include:
-         *      - minValueNode,
-         *      - getMaxHeight,
-         *      - getHeight,
-         *      - getBalanceFactor,
-         *      - LLRotation
-         *      - RRRotation,
-         *      - LRRotation,
-         *      - RLRotation.
-         *
-         * To understand what each of these methods do, see the method prologues and
-         * code for each. You can also look at the method InsertElement, as it has do
-         * do many of the same things as this method.
-         */
+        if (value < node.value) {
+            node.leftChild = deleteElement(value, node.leftChild);
+        } else if (value > node.value) {
+            node.rightChild = deleteElement(value, node.rightChild);
+        } else {
+            // scenario 1
+            if ((node.leftChild == null) & (node.rightChild == null)) {
+                return null;
+            }
+            // scenario 2
+            else if (node.rightChild == null) {
+                return node.leftChild;
+            }
+            // scenario 3
+            else if (node.leftChild == null) {
+                return node.rightChild;
+            }
+            // scenario 4
+            // grab smallest in right subtree
+            Node temp = minValueNode(node.rightChild);
+            
+            // copy inorder sucessor
+            node.value = temp.value;
+
+            // delete the inorder successor
+            node.rightChild = deleteElement(temp.value, node.rightChild);
+    }
+
+    // update the height of the current node
+    node.height = getMaxHeight(getHeight(node.leftChild), getHeight(node.rightChild)) + 1;
+
+    // check if the node is unbalanced
+    int balance = getBalanceFactor(node);
+
+    // left left case
+    if (balance > 1 && getBalanceFactor(node.leftChild) >= 0) {
+        return LLRotation(node);
+    }
+
+    // right right case
+    if (balance < -1 && getBalanceFactor(node.rightChild) <= 0) {
+        return RRRotation(node);
+    }
+
+    // left right case
+    if (balance > 1 && getBalanceFactor(node.leftChild) < 0) {
+        return LRRotation(node);
+    }
+
+    // right left case
+    if (balance < -1 && getBalanceFactor(node.rightChild) > 0) {
+        return RLRotation(node);
+    }
 
         return node;
     }
